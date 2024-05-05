@@ -1,0 +1,79 @@
+﻿@using Core.ViewModel
+@model MedicalExaminationModel
+
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>صفحة المعلومات الشخصية</title>
+	<style>
+		.btn-custom {
+			background-color: #1a73e8; /* Blue */
+			color: white;
+			border-radius: 5px;
+			border: none;
+		}
+
+			.btn-custom:hover {
+				background-color: #1558b3;
+			}
+
+		.btn-danger:hover {
+			background-color: #cc0000;
+		}
+	</style>
+
+</head>
+<body>
+	<div class="container mt-3">
+		<h2> تفاصيل الكشف</h2>
+		<hr />
+		@{
+
+			<div class="row">
+				<h4>تاريخ الكشف: @Model.MedicalExamination.DetectionDate</h4>
+
+				<div class="col-md-6">
+					<div class="mb-3">
+						<label for="name" class="form-label">اسم المريض:</label>
+						<input type="text" class="form-control" value="@Model.MedicalExamination.Patient.PatientName" id="name" readonly>
+						<a class="btn btn-custom" asp-controller="Patient" asp-action="PatientDetails" asp-route-Id="@Model.MedicalExamination.Patient.patientId">عرض ملف المريض</a>
+
+					</div>
+					<div class="mb-3">
+						<label for="name" class="form-label">حالة المريض:</label>
+						<input type="text" class="form-control" value="@Model.MedicalExamination.patientStatus" id="name" readonly>
+					</div>
+					<div class="mb-3">
+						<label for="idNumber" class="form-label">تاريخ اعادة الكشف:</label>
+						<input type="text" class="form-control" value="@(Model.MedicalExamination.Re_ExaminationDate!=null? Model.MedicalExamination.Re_ExaminationDate:"لا يوجد" )" id="idNumber" readonly>
+					</div>
+					<div class="mb-3">
+						<label for="dateOfBirth" class="form-label">سعر الكشف:</label>
+						<input type="text" class="form-control" value="@Model.MedicalExamination.DetectionPrice" id="dateOfBirth" readonly>
+					</div>
+					<div class="mb-3">
+						<label for="maritalStatus" class="form-label">ملاحظات عن الكشف:</label>
+						<textarea class="form-control" id="maritalStatus" readonly>@Model.MedicalExamination.Notes</textarea>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="mb-3">
+						<label for="bloodType" class="form-label">نوع الكشف:</label>
+						<input type="text" class="form-control" value="@(Model.MedicalExamination.MDT.Any() ? string.Join("---", Model.MedicalExamination.MDT.Select(p=>p.DetectionType.DetectionTypeName)) : "لا يوجد")" readonly>
+					</div>
+					<div class="mb-3">
+						<label class="form-label">الاشعة:</label>
+						<input type="text" class="form-control" value="@(Model.MedicalExamination.MedicalExamination_X_rays.Any() ? string.Join("---", Model.MedicalExamination.MedicalExamination_X_rays.Select(p => p.X_rayName)) : "لا يوجد")" readonly>
+					</div>
+				</div>
+			</div>
+			<hr />
+
+		}
+	</div>
+
+</body>
+</html>

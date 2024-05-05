@@ -1,0 +1,29 @@
+﻿@model Booking
+
+<div class="modal fade" id="inputModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="modalLabel">إضافة موعد جديد</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<form id="entryForm" asp-action="Create" asp-controller="Booking" method="post">
+					<div class="mb-3">
+						<label for="nameInput" class="form-label">اسم الحجز</label>
+						<input type="text" class="form-control" asp-for="BookingName">
+						<span asp-validation-for="BookingName" class="text-danger"></span>
+
+					</div>
+					<div class="mb-3">
+						<label for="dateInput" class="form-label">تاريخ الحجز</label>
+						<input type="date" class="form-control" asp-for="BookingDate" value="@DateTime.Now" required>
+						<span asp-validation-for="BookingDate" class="text-danger"></span>
+					</div>
+					<button type="submit" class="btn btn-primary">إضافة</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+

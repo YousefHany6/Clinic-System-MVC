@@ -1,0 +1,106 @@
+﻿@using Core.Constant
+@using Core.ViewModel
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Dentist Treatment</title>
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link href="~/boxicons/css/boxicons.css" rel="stylesheet" />
+	<link href="~/boxicons/css/boxicons.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="~/Clinic_System.styles.css" asp-append-version="true" />
+	<link href="~/font-awesome/css/all.css" rel="stylesheet" />
+	<link href="~/font-awesome/css/all.min.css" rel="stylesheet" />
+</head>
+<body dir="rtl" style="
+    background-color: #ecf0f5;
+">
+	<partial name="_LoginPartial" />
+
+	<section class="home-section">
+		<div class="home-content" style="
+    background-color: rgb(60, 141, 188);
+justify-content: space-between;
+">
+			<i class='bx bx-menu'></i>
+			@if (User.Identity.IsAuthenticated && User.IsInRole(Roles.Admin.ToString()))
+
+			{
+
+				<nav class="navbar navbar-expand-lg  " dir="ltr">
+					<div class="container-fluid">
+						<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown" aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
+							<span class="navbar-toggler-icon"></span>
+						</button>
+						<div class="collapse navbar-collapse" id="navbarNavDarkDropdown">
+							<ul class="navbar-nav">
+								<li class="nav-item dropdown">
+									<a class="nav-link dropdown-toggle" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="
+    color: white;
+    font-size: larger;
+    font-family: cursive;
+    font-weight: 700;
+ 		   font-size: 24px;
+	">
+										Admin <i class="bi bi-gear-fill"></i>
+									</a>
+									<ul class="dropdown-menu" aria-labelledby="navbarDarkDropdownMenuLink">
+										<li style="
+		    text-align: end;
+	">
+											<a class="dropdown-item" asp-action="InformationOfAdmin" asp-controller="Home" style="
+    font-size: 20px;
+    font-weight: 700;
+ 		   font-family: 'WMitra';
+	">بياناتى</a>
+										</li>
+										<li style="text-align: end;">
+											<a class="dropdown-item" asp-action="ChangePasswordAdmin" asp-controller="Home" style="
+      font-size: 20px;
+      font-weight: 700;
+		      font-family: 'WMitra';
+			">تغير كلمة السر</a>
+										</li>
+
+									</ul>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</nav>
+			}
+
+
+		</div>
+		<div>
+			@RenderBody()
+
+		</div>
+
+	</section>
+	<script src="~/datatables.net/jquery.datatables.min.js"></script>
+	<script src="~/datatables.net/s.js"></script>
+	<script>
+		let arrow = document.querySelectorAll(".arrow");
+		for (var i = 0; i < arrow.length; i++) {
+			arrow[i].addEventListener("click", (e) => {
+				let arrowParent = e.target.parentElement.parentElement;//selecting main parent of arrow
+				arrowParent.classList.toggle("showMenu");
+			});
+		}
+		let sidebar = document.querySelector(".sidebar");
+		let sidebarBtn = document.querySelector(".bx-menu");
+		console.log(sidebarBtn);
+		sidebarBtn.addEventListener("click", () => {
+			sidebar.classList.toggle("close");
+		});
+
+	</script>
+
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	@await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

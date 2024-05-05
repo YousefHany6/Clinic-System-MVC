@@ -1,0 +1,105 @@
+﻿@using Core.ViewModel
+@model PatientModel
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>صفحة المعلومات الشخصية</title>
+</head>
+<body>
+	<div class="container mt-3">
+		<h1>المعلومات الشخصية</h1>
+		<hr>
+		<div class="row">
+			<div class="col-md-6">
+				<div class="mb-3">
+					<label for="name" class="form-label">الاسم:</label>
+					<input type="text" class="form-control" value="@Model.patient.PatientName" id="name" readonly>
+				</div>
+				<div class="mb-3">
+					<label for="idNumber" class="form-label">العمر:</label>
+					<input type="text" class="form-control" value="@Model.patient.Age" id="idNumber" readonly>
+				</div>
+				<div class="mb-3">
+					<label for="dateOfBirth" class="form-label">النوع:</label>
+					<input type="text" class="form-control" value="@Model.patient.Gender" id="dateOfBirth" readonly>
+				</div>
+				<div class="mb-3">
+					<label for="maritalStatus" class="form-label">ملاحظات عن المريض:</label>
+					<textarea class="form-control" id="maritalStatus" readonly>@Model.patient.Notes</textarea>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="mb-3">
+					<label for="bloodType" class="form-label">ارقام الهاتف:</label>
+					<input type="text" class="form-control" value="@(Model.patient.patientPhoneNumbers.Any() ? string.Join("---", Model.patient.patientPhoneNumbers.Select(p => p.PhoneNumber)) : "لا يوجد")" readonly>
+				</div>
+				<div class="mb-3">
+					<label class="form-label">الامراض المزمنة:</label>
+					<input type="text" class="form-control" value="@(Model.patient.patientChronicDiseases.Any() ? string.Join("---", Model.patient.patientChronicDiseases.Select(p => p.ChronicDisease)) : "لا يوجد")" readonly>
+				</div>
+				<div class="mb-3">
+					<label for="email" class="form-label">الحالات الخاصة:</label>
+					<input type="text" class="form-control" value="@(Model.patient.patientSpecialCases.Any() ? string.Join("---", Model.patient.patientSpecialCases.Select(p => p.SpecialCase)) : "لا يوجد")" readonly>
+				</div>
+				<div class="mb-3">
+					<label for="email" class="form-label">العنوان:</label>
+					<input type="text" class="form-control" value="@(Model.patient.PatientAddresses.Any() ? string.Join("---", Model.patient.PatientAddresses.Select(p => p.Address)) : "لا يوجد")" readonly>
+				</div>
+			</div>
+		</div>
+	</div>
+	<hr />
+	<div class="container mt-3">
+		<h2>الكشوفات الطبية</h2>
+		<hr />
+		@{
+			if (Model.patient.MedicalExamination.Any())
+			{
+				foreach (var p in Model.patient.MedicalExamination)
+				{
+					<div class="row">
+						<h4>تاريخ الكشف: @p.DetectionDate</h4>
+
+						<div class="col-md-6">
+							<div class="mb-3">
+								<label for="name" class="form-label">حالة المريض:</label>
+								<input type="text" class="form-control" value="@p.patientStatus" id="name" readonly>
+							</div>
+							<div class="mb-3">
+								<label for="idNumber" class="form-label">تاريخ اعادة الكشف:</label>
+								<input type="text" class="form-control" value="@(p.Re_ExaminationDate!=null? p.Re_ExaminationDate:"لا يوجد" )" id="idNumber" readonly>
+							</div>
+							<div class="mb-3">
+								<label for="dateOfBirth" class="form-label">سعر الكشف:</label>
+								<input type="text" class="form-control" value="@p.DetectionPrice" id="dateOfBirth" readonly>
+							</div>
+							<div class="mb-3">
+								<label for="maritalStatus" class="form-label">ملاحظات عن الكشف:</label>
+								<textarea class="form-control" id="maritalStatus" readonly>@p.Notes</textarea>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="mb-3">
+								<label for="bloodType" class="form-label">نوع الكشف:</label>
+								<input type="text" class="form-control" value="@(p.MDT.Any() ? string.Join("---", p.MDT.Select(p => p.DetectionType.DetectionTypeName)) : "لا يوجد")" readonly>
+							</div>
+							<div class="mb-3">
+								<label class="form-label">الاشعة:</label>
+								<input type="text" class="form-control" value="@(p.MedicalExamination_X_rays.Any() ? string.Join("---", p.MedicalExamination_X_rays.Select(p => p.X_rayName)) : "لا يوجد")" readonly>
+							</div>
+						</div>
+					</div>
+					<hr />
+				}
+			}
+			else
+			{
+				<h4>لا يوجد</h4>
+			}
+		}
+	</div>
+
+</body>
+</html>

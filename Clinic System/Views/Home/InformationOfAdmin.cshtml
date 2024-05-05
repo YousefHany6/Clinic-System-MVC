@@ -1,0 +1,40 @@
+﻿@model Core.Models.User
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="~/css/addpatient.css" rel="stylesheet" />
+</head>
+<body style="overflow-x: hidden;">
+	<div class="container mt-5">
+		<h2 class="mb-3"> بياناتى </h2>
+		<form id="registrationForm" asp-action="InformationOfAdmin" asp-controller="Home" method="post" enctype="multipart/form-data">
+			<!-- القسم الأول: معلومات المريض الشخصية -->
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<input type="hidden" asp-for="Id" value="@Model.Id" />
+			<div class="mb-3">
+				<label for="patientFullName" class="form-label">الاسم</label>
+				<input type="text" asp-for="FullName" class="form-control" placeholder="أدخل كلمة المرور الحالية">
+				<span asp-validation-for="FullName" style=" color:red;"></span>
+			</div>
+			<div class="mb-3">
+				<label for="patientFullName" class="form-label">البريد الألكترونى</label>
+				<input type="text" asp-for="Email" class="form-control" placeholder="كلمة المرور الجديدة">
+				<span asp-validation-for="Email" style=" color:red;"></span>
+			</div>
+			<div style="text-align: center;">
+
+				<input type="submit" class="btnadd" value="تغيير البيانات" />
+			</div>
+		</form>
+	</div>
+</body>
+</html>
+
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+}

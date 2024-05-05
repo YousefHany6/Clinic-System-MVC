@@ -1,0 +1,224 @@
+﻿@using Core.ViewModel
+@model MedicalExaminationModel
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title> المريض</title>
+	<script src="~/js/dselect.js"></script>
+	<link href="~/css/addpatient.css" rel="stylesheet" />
+	<link href="~/cssdeselect/dselect.css" rel="stylesheet" />
+	<link href="~/cssdeselect/dselect.min.css" rel="stylesheet" />
+	<style>
+		.btn-custom {
+			background-color: #1a73e8; /* Blue */
+			color: white;
+			border-radius: 5px;
+			border: none;
+		}
+
+			.btn-custom:hover {
+				background-color: #1558b3;
+			}
+
+		.btn-danger:hover {
+			background-color: #cc0000;
+		}
+
+		.dselect-wrapper .dropdown-menu {
+			padding: .375rem;
+			width: 100%;
+			text-align: right !important;
+		}
+
+		.dropdown-menu {
+			position: absolute;
+			z-index: 1000;
+			display: none;
+			min-width: 66rem;
+			padding: .5rem 0;
+			margin: 0;
+			font-size: 1rem;
+			color: #212529;
+			text-align: right !important;
+			list-style: none;
+			background-color: #fff;
+			background-clip: padding-box;
+			border: 1px solid rgba(0, 0, 0, .15);
+			border-radius: .25rem;
+		}
+	</style>
+
+</head>
+<body style="overflow-x: hidden;">
+	<div class="container mt-5">
+		<h2 class="mb-3"> الكشف الطبى للمريض</h2>
+		<p>
+			<a class="btn btn-custom" asp-controller="Patient" asp-action="AddPatientView">إضافة مريض جديد</a>
+		</p>
+		<form id="registrationForm" asp-action="Add" asp-controller="MedicalExamination" method="post" enctype="multipart/form-data">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<div class="mb-3">
+				<label for="detectionTypes" class="form-label">اختر اسم المريض</label>
+
+				<select required class="form-select" id="example-search" asp-items="ViewBag.patients" asp-for="MedicalExamination.patientId">
+					<option value="" selected disabled>اختر اسم المريض</option> <!-- Set value to empty -->
+				</select>
+			</div>
+
+
+			<div class="mb-3">
+				<label for="MedicalExaminationNotes" class="form-label">ملاحظات الكشف الطبى</label>
+				<textarea class="form-control" asp-for="MedicalExamination.Notes" id="MedicalExaminationNotes" rows="3" placeholder="أدخل ملاحظات الكشف الطبى"></textarea>
+				<span asp-validation-for="MedicalExamination.Notes" style=" color:red;"></span>
+
+			</div>
+			<div class="mb-3">
+				<label for="patientStatus" class="form-label">حالة المريض</label>
+				<input type="text" asp-for="MedicalExamination.patientStatus" class="form-control" id="patientStatus" placeholder="أدخل حالة المريض فى الكشف">
+				<span asp-validation-for="MedicalExamination.patientStatus" style=" color:red;"></span>
+			</div>
+			<div class="mb-3">
+				<label for="reExamination" class="form-label">هل يوجد اعادة</label>
+				<select class="form-select" id="reExamination">
+					<option value="no">لا</option> <!-- No -->
+					<option value="yes">نعم</option> <!-- Yes -->
+				</select>
+			</div>
+
+			<!-- Conditionally displayed date input field for "تاريخ اعادة الكشف" -->
+			<div class="mb-3" id="reExaminationDateContainer" style="display: none;">
+				<label for="Re_ExaminationDate" class="form-label">تاريخ اعادة الكشف</label>
+				<input type="date" asp-for="MedicalExamination.Re_ExaminationDate" required class="form-control" id="Re_ExaminationDate" placeholder="أدخل تاريخ اعادة الكشف">
+				<span asp-validation-for="MedicalExamination.Re_ExaminationDate" style="color:red;"></span>
+			</div>
+			<div class="mb-3" style="text-align:center;">
+				<button type="button" class="addpatient" id="addX_rays">اضافة أشعة </button>
+				<div id="addX_raysContainer">
+				</div>
+			</div>
+			<div class="mb-3">
+
+				@{
+					if ((ViewBag.DetectionTypes as SelectList)?.Any() ?? false)
+					{
+						<label for="detectionTypes" class="form-label">اختر نوع الكشف</label>
+
+						<select class="form-select" id="example-multiple" multiple asp-items="@ViewBag.DetectionTypes" name="detectionTypes" onchange="calculateTotalPrice()">
+						</select>
+					}
+					else
+					{
+						<label for="detectionTypes" class="form-label">
+							اختر نوع الكشف
+							<a class="btn btn-custom" asp-controller="DetectionType" asp-action="Create">إضافة نوع جديد</a>
+
+						</label>
+
+						<select class="form-select" disabled id="example-multiple" multiple>
+							<option selected value="">
+								لايوجد انواع
+							</option>
+
+						</select>
+					}
+				}
+			</div>
+			<div class="mb-3">
+				<label for="totalPrice" class="form-label">السعر الإجمالي</label>
+				<input type="text" id="totalPrice" asp-for="MedicalExamination.DetectionPrice" readonly class="form-control" placeholder="السعر الإجمالي">
+				<span asp-validation-for="MedicalExamination.DetectionPrice" style=" color:red;"></span>
+			</div>
+			<div style="text-align: center;">
+
+				<input type="submit" class="btnadd" value="حفظ المعلومات" />
+			</div>
+		</form>
+	</div>
+	<script>
+		function calculateTotalPrice() {
+			var selectedOptions = document.getElementById("example-multiple").selectedOptions;
+			var selectedValues = Array.from(selectedOptions).map(option => option.value);
+
+			if (selectedValues.length === 0) {
+				document.getElementById("totalPrice").value = "";
+				return;
+			}
+
+			$.ajax({
+				type: "POST",
+				url: "/DetectionType/CalculateTotalPrice",
+				data: { detectionTypeIds: selectedValues },
+				success: function (response) {
+					document.getElementById("totalPrice").value = response.totalPrice.toFixed(2);
+				},
+				error: function (xhr, status, error) {
+					console.error("Error calculating total price:", error);
+				}
+			});
+		}
+		document.getElementById('addX_rays').addEventListener('click', function () {
+			const specialCasesContainer = document.getElementById('addX_raysContainer'); // Container for new sections
+			const specialCaseCount = document.querySelectorAll('.addX_rays-input').length;
+
+			const newSpecialCaseDiv = document.createElement('div');
+			newSpecialCaseDiv.classList.add('mb-3');
+
+			newSpecialCaseDiv.innerHTML = `
+																																																																																																																																										<label class="form-label" style="float: inline-start;">اسم الأشعة</label>
+																																																																																																																																										<div class="input-group mb-2">
+																																																																																																																																														<input type="text" required name="MedicalExamination_X_ray[${specialCaseCount}].X_rayName" class="form-control addX_rays-input" placeholder="ادخل الاسم" required />
+																																																																																																																																														<button class="btn btn-danger remove-addX_rays" type="button">إزالة</button>
+																																																																																																																																										</div>
+																																																																																																																																										<div class="validation-message" style="display:none; color:red;">مطلوب.</div>
+																																																																																																																																						`;
+
+			specialCasesContainer.appendChild(newSpecialCaseDiv);
+
+			// Add remove functionality for the new special case section
+			newSpecialCaseDiv.querySelector('.remove-addX_rays').addEventListener('click', function () {
+				newSpecialCaseDiv.remove();
+			});
+		});
+
+		// Initialize multiple select with search enabled
+		dselect(document.querySelector('#example-multiple'));
+
+		// Initialize search on single select
+		dselect(document.querySelector('#example-search'), {
+			search: true
+		});
+
+		// Attach event handler for calculateTotalPrice to the multiple select dropdown
+		document.getElementById("example-multiple").addEventListener("change", calculateTotalPrice);
+		document.getElementById("registrationForm").addEventListener("submit", function (event) {
+			const selectElement = document.getElementById("example-search");
+			if (selectElement.value === "") {
+				alert("يرجى اختيار اسم المريض"); // Display an alert in case no patient is selected
+				event.preventDefault(); // Prevent form submission
+			}
+		});
+
+	</script>
+
+</body>
+</html>
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+	<script>
+		document.getElementById("reExamination").addEventListener("change", function () {
+			var selectedValue = this.value; // Get the selected value
+			var container = document.getElementById("reExaminationDateContainer");
+
+			if (selectedValue === "yes") {
+				container.style.display = "block"; // Show the date input
+			} else {
+				container.style.display = "none"; // Hide the date input
+			}
+		});
+	</script>
+}

@@ -1,0 +1,126 @@
+﻿@model IEnumerable<Booking>
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style>
+		table.dataTable thead th {
+			text-align: right !important;
+		}
+
+		td.sorting_1 {
+			padding-right: 27px;
+		}
+	</style>
+	<link href="~/datatables.net/dtbs5css.css" rel="stylesheet" />
+</head>
+<body dir="rtl">
+
+	<!-- Button trigger modal -->
+	<button type="button" class="btn btn-primary" data-bs-toggle="modal" style="
+    margin-bottom: 14px;
+    margin-top: 10px;
+" data-bs-target="#inputModal">
+		إضافة موعد جديد
+	</button>
+
+	<!-- Modal -->
+	<partial name="_Add.cshtml" model="new Booking()" />
+	<!-- DataTable -->
+	<table id="example" class="table">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>الاسم</th>
+				<th>التاريخ والوقت</th>
+				<th>حالة الحجز</th>
+				<th>الإعدادات</th>
+			</tr>
+		</thead>
+		<tbody>
+			@{
+				int count = 0;
+
+			}
+			@foreach (var item in Model)
+			{
+				<tr>
+					@{
+						count += 1;
+					}
+					<td>@count</td>
+					<td>@item.BookingName</td>
+					<td>@item.BookingDate.ToString("yyyy-MM-dd")</td>
+					<td>
+						@{
+							if (DateTime.Now < item.BookingDate)
+							{
+								<text>فعال</text>
+							}
+							else
+							{
+								<text>انتهى</text>
+							}
+						}
+					</td>
+
+					<td>
+						<a class="btn btn-secondary" asp-controller="Booking" asp-action="Edit" asp-route-Id="@item.BookingId">تعديل</a>
+						<button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-id="@item.BookingId">حذف</button>
+
+						<!-- Delete Confirmation Modal -->
+						<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="confirmDeleteLabel">تأكيد الحذف</h5>
+										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<div class="modal-body">
+										هل أنت متأكد من أنك تريد حذف هذا الموعد؟
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+										<form method="post" asp-controller="Booking" asp-action="Delete" asp-route-Id="@item.BookingId" class="delete-form">
+											<button type="submit" class="btn btn-danger">حذف</button>
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+	@section Scripts {
+		<script src="~/datatables.net/jquery.datatables.min.js"></script>
+		<script src="~/datatables.net/s.js"></script>
+		<!-- Initialize DataTables with Export Buttons -->
+		<script>
+			$(document).ready(function () {
+				$('#example').DataTable({
+					"language": {
+						"url": "/datatables.net/arabic.json"
+					},
+					"direction": "rtl"
+				});
+
+				// Update route ID for delete confirmation
+				$('#confirmDeleteModal').on('show.bs.modal', function (event) {
+					var button = $(event.relatedTarget); // Button that triggered the modal
+					var patientId = button.data('Id');
+					var form = $(this).find('.delete-form');
+					form.attr('asp-route-Id', patientId); // Set the correct route ID for deletion
+				});
+			});
+
+		</script>
+		@{
+			await Html.RenderPartialAsync("_ValidationScriptsPartial");
+		}
+	}
+
+</body>
+</html>

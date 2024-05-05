@@ -1,0 +1,215 @@
+﻿@using Core.ViewModel
+@model PatientModel
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>المريض</title>
+	<link href="~/css/addpatient.css" rel="stylesheet" />
+</head>
+<body style="overflow-x: hidden;">
+	<div class="container mt-5">
+		<h2 class="mb-3">تعديل ملف المريض</h2>
+		<form id="registrationForm" asp-action="EditPatient" asp-controller="Patient" method="post" enctype="multipart/form-data">
+			<!-- معلومات المريض الشخصية -->
+			<input hidden type="text" asp-for="patient.patientId" />
+			<div class="mb-3">
+				<label for="patientFullName" class="form-label">الاسم الكامل للمريض</label>
+				<input type="text" asp-for="patient.PatientName" class="form-control" id="patientFullName" placeholder="أدخل الاسم الكامل للمريض">
+				<span asp-validation-for="patient.PatientName" style="color:red;"></span>
+			</div>
+			<div class="mb-3">
+				<label for="patientAge" class="form-label">العمر</label>
+				<input type="number" asp-for="patient.Age" class="form-control" id="patientAge" placeholder="أدخل عمر المريض">
+				<span asp-validation-for="patient.Age" style="color:red;"></span>
+			</div>
+			<div class="mb-3">
+				<label for="patientGender" class="form-label">الجنس</label>
+				<select class="form-select" asp-for="patient.Gender" id="patientGender" required>
+					<option selected>اختر...</option>
+					<option value="male">ذكر</option>
+					<option value="female">أنثى</option>
+				</select>
+				<span asp-validation-for="patient.Gender" style="color:red;"></span>
+			</div>
+			<div class="mb-3">
+				<label for="patientNotes" class="form-label">ملاحظات حول المريض</label>
+				<textarea class="form-control" asp-for="patient.Notes" id="patientNotes" rows="3" placeholder="أدخل ملاحظات حول المريض"></textarea>
+				<span asp-validation-for="patient.Notes" style="color:red;"></span>
+			</div>
+			<!-- قسم أرقام الهاتف -->
+			<div class="mb-3">
+				<label class="form-label">أرقام الهاتف</label>
+				<div id="phoneNumbers">
+					@{
+						var phoneCount = Model.patient.patientPhoneNumbers.Count;
+						var phs = (Model.patient.patientPhoneNumbers).ToList();
+						for (int i = 0; i < phoneCount; i++)
+						{
+							var phoneNumber = phs[i].PhoneNumber;
+							<div class="input-group mb-2">
+								<input type="text" name="phones[@i].PhoneNumber" class="form-control phone-input" placeholder="رقم الهاتف" value="@phoneNumber" />
+								@{
+									if (i == 0)
+									{
+										<button class="btn btn-secondary add-phone" type="button">إضافة</button>
+
+									}
+									else
+									{
+										<button class="btn btn-danger remove-phone" type="button">إزالة</button>
+									}
+								}
+							</div>
+						}
+					}
+					<div class="validation-message" id="phoneValidation" style="display: none; color: red;">
+						يجب أن يكون رقم الهاتف 11 رقمًا ويحتوي على أرقام فقط.
+					</div>
+				</div>
+			</div>
+			<!-- عنوان المريض -->
+			<div class="mb-3">
+				<label for="patientAddresses" class="form-label">عنوان المريض</label>
+				<input type="text" class="form-control" id="patientAddresses" asp-for="PatientAddresses.Address" placeholder="أدخل عنوان المريض">
+				<span asp-validation-for="PatientAddresses.Address" style="color:red;"></span>
+			</div>
+			<div class="mb-3" style="text-align:center;">
+				<button type="button" class="addpatient" id="addChronicDisease">اضافة مرض مزمن</button>
+				<div id="chronicDiseasesContainer">
+					@{
+						if (Model.patient.patientChronicDiseases.Any())
+						{
+
+							var pcd = Model.patient.patientChronicDiseases.ToList();
+							for (int i = 0; i < pcd.Count; i++)
+							{
+								<div class="mb-3">
+									<label class="form-label" style="float: inline-start">اسم المرض المزمن</label>
+									<div class="input-group mb-2">
+										<input type="text" required name="patientChronicDiseases[@i].ChronicDisease" value="@pcd[@i].ChronicDisease" class="form-control ChronicDisease-input" placeholder="ادخل الاسم" />
+										<button class="btn btn-danger remove-ChronicDisease" type="button">إزالة</button>
+									</div>
+								</div>
+							}
+						}
+					}
+				</div>
+
+				<button type="button" class="addpatient" id="addSpecialCase">اضافة حالة خاصة</button>
+				<div id="specialCasesContainer">
+
+					@{
+						if (Model.patient.patientSpecialCases.Any())
+						{
+
+							var psc = Model.patient.patientSpecialCases.ToList();
+							for (int i = 0; i < psc.Count; i++)
+							{
+								<div class="mb-3">
+									<label class="form-label" style="float: inline-start;">اسم الحالة الخاصة</label>
+									<div class="input-group mb-2">
+										<input type="text" required name="patientSpecialCase[@i].SpecialCase" value="@psc[i].SpecialCase" class="form-control SpecialCase-input" placeholder="ادخل الاسم" required />
+										<button class="btn btn-danger remove-SpecialCase" type="button">إزالة</button>
+									</div>
+								</div>
+							}
+						}
+					}
+				</div>
+
+			</div>
+			<div style="text-align: center;">
+				<input type="submit" class="btnadd" value="تعديل الملف" />
+			</div>
+		</form>
+	</div>
+
+	@section Scripts {
+		@{
+			await Html.RenderPartialAsync("_ValidationScriptsPartial");
+		}
+		<script src="~/js/editpatient.js"></script>
+
+		<script>
+			document.addEventListener('DOMContentLoaded', function () {
+				document.addEventListener('click', function (event) {
+					if (event.target && event.target.classList.contains('remove-phone')) {
+						// Get the parent input group and remove it
+						var inputGroup = event.target.closest('.input-group');
+						if (inputGroup) {
+							inputGroup.remove();
+						}
+					}
+				});
+			});
+
+			document.addEventListener('DOMContentLoaded', function () {
+				const phoneNumbersContainer = document.getElementById('phoneNumbers');
+				const phoneValidationMessage = document.getElementById('phoneValidation');
+
+				// Event listener for phone number validation
+				document.querySelectorAll('.phone-input').forEach((input) => {
+					input.addEventListener('input', function () {
+						if (!isPhoneNumberValid(input.value)) {
+							phoneValidationMessage.style.display = 'block';
+						} else {
+							phoneValidationMessage.style.display = 'none';
+						}
+					});
+				});
+
+				// Event listener to add new phone numbers
+				const addPhoneButton = document.querySelector('.add-phone');
+				let phoneCount = @Model.patient.patientPhoneNumbers.Count;
+
+				addPhoneButton.addEventListener('click', function () {
+					const newPhoneInputGroup = document.createElement('div');
+					newPhoneInputGroup.classList.add('input-group', 'mb-2');
+
+					const newPhoneInput = document.createElement('input');
+					newPhoneInput.type = 'text';
+					newPhoneInput.name = `phones[${phoneCount}].PhoneNumber`;
+					newPhoneInput.classList.add('form-control', 'phone-input');
+					newPhoneInput.placeholder = 'رقم الهاتف';
+
+					newPhoneInputGroup.appendChild(newPhoneInput);
+					phoneCount++;
+
+					// Add remove button
+					const removePhoneButton = document.createElement('button');
+					removePhoneButton.classList.add('btn', 'btn-danger');
+					removePhoneButton.type = 'button';
+					removePhoneButton.textContent = 'إزالة';
+
+					newPhoneInputGroup.appendChild(removePhoneButton);
+
+					// Add validation logic for new phone numbers
+					newPhoneInput.addEventListener('input', function () {
+						if (!isPhoneNumberValid(newPhoneInput.value)) {
+							phoneValidationMessage.style.display = 'block';
+						} else {
+							phoneValidationMessage.style.display = 'none';
+						}
+					});
+
+					// Append the new phone input group to the container
+					phoneNumbersContainer.appendChild(newPhoneInputGroup);
+
+					// Add event listener to remove phone numbers
+					removePhoneButton.addEventListener('click', function () {
+						phoneNumbersContainer.removeChild(newPhoneInputGroup);
+					});
+				});
+			});
+
+			// Function to validate phone numbers
+			function isPhoneNumberValid(phoneNumber) {
+				const phoneRegex = /^\d{11}$/; // Matches 11-digit numbers
+				return phoneRegex.test(phoneNumber); // Returns true if valid, false otherwise
+			}
+		</script>
+	}
+</body>
+</html>

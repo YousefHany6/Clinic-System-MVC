@@ -1,0 +1,40 @@
+﻿@model Core.Models.Booking
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="~/css/addpatient.css" rel="stylesheet" />
+</head>
+<body style="overflow-x: hidden;">
+	<div class="container mt-5">
+		<h2 class="mb-3"> تعديل  الحجز  </h2>
+		<form id="registrationForm" asp-action="Edit" asp-controller="Booking" method="post" enctype="multipart/form-data">
+			<input type="hidden" asp-for="BookingId" />
+			<input type="hidden" asp-for="UserId" />
+			<!-- القسم الأول: معلومات المريض الشخصية -->
+			<div class="mb-3">
+				<label for="patientFullName" class="form-label">اسم الحجز</label>
+				<input type="text" asp-for="BookingName" class="form-control" placeholder="اسم الحجز">
+				<span asp-validation-for="BookingName" style=" color:red;"></span>
+			</div>
+			<div class="mb-3">
+				<label for="patientFullName" class="form-label">تاريخ الحجز</label>
+				<input type="date" asp-for="BookingDate" class="form-control" placeholder="تاريخ الحجز">
+				<span asp-validation-for="BookingDate" style=" color:red;"></span>
+			</div>
+			<div style="text-align: center;">
+
+				<input type="submit" class="btnadd" value="تعديل " />
+			</div>
+		</form>
+	</div>
+</body>
+</html>
+
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+}

@@ -1,0 +1,86 @@
+﻿@page
+@model LoginModel
+
+
+<!DOCTYPE html>
+<html lang="ar">
+<!-- Change language to Arabic -->
+<head>
+	<title>تسجيل الدخول V18</title> <!-- Arabic title -->
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="~/login/main.css" rel="stylesheet" />
+	<link href="~/login/main2.css" rel="stylesheet" />
+	<!--===============================================================================================-->
+</head>
+<body style="background-color: #c9c7c7;direction: rtl;">
+	<!-- Set text direction to right-to-left -->
+
+	<div class="limiter" style="
+    width: 71rem;
+    direction: ltr;
+">
+		<div class="container-login100">
+
+			<div class="wrap-login100">
+				<div style="height: 20rem;position: absolute;top: -173px;width: 38rem;">
+					<img src="/Photos/blue-green-simple-modern-dentist-logo.svg" style="display: block;margin: auto;width: 34rem;" alt="Logo"> <!-- Adding a margin for alignment -->
+				</div>
+				<form class="login100-form validate-form" id="account" dir="rtl" method="post">
+					<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+					<span class="login100-form-title p-b-43">
+						تسجيل الدخول للمتابعة <!-- Arabic text -->
+					</span>
+
+					<div class="wrap-input100 validate-input" data-validate="البريد الإلكتروني مطلوب">
+						<input class="input100" type="text" asp-for="Input.Email">
+						<span asp-validation-for="Input.Email" class="text-danger"></span>
+						<span class="focus-input100"></span>
+						<span class="label-input100">البريد الإلكتروني</span> <!-- Arabic label -->
+					</div>
+
+					<div class="wrap-input100 validate-input" data-validate="كلمة المرور مطلوبة">
+						<input class="input100" type="password" asp-for="Input.Password">
+						<span asp-validation-for="Input.Password" class="text-danger"></span>
+						<span class="focus-input100"></span>
+						<span class="label-input100">كلمة المرور</span> <!-- Arabic label -->
+					</div>
+
+					<div class="flex-sb-m w-full p-t-3 p-b-32">
+						<div class="contact100-form-checkbox">
+							<input class="input-checkbox100" asp-for="Input.RememberMe" id="ckb1" type="checkbox" name="remember-me">
+							<label class="label-checkbox100" for="ckb1">
+								تذكرني <!-- Arabic text -->
+							</label>
+						</div>
+
+						<div style="display:none;">
+							<a href="#" class="txt1">
+								هل نسيت كلمة المرور؟ <!-- Arabic text -->
+							</a>
+						</div>
+					</div>
+
+					<div class="container-login100-form-btn">
+						<button class="login100-form-btn" type="submit">
+							تسجيل الدخول <!-- Arabic text -->
+						</button>
+					</div>
+				</form>
+
+				<div class="login100-more" style=" background-size: cover; background-position: center;">
+					<!-- Fixed background image with correct path and positioning -->
+				</div>
+			</div>
+		</div>
+	</div>
+
+	@* <script src="~/login/main.js"></script> *@
+</body>
+</html>
+
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+}

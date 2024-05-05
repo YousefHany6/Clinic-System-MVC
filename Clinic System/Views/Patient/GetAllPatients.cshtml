@@ -1,0 +1,159 @@
+﻿@model IEnumerable<Core.Models.patient>
+
+
+
+
+<!-- Custom styles for buttons -->
+<style>
+	table.dataTable thead th {
+		text-align: right !important;
+	}
+
+	.btn-custom {
+		background-color: #1a73e8; /* Blue */
+		color: white;
+		border-radius: 5px;
+		border: none;
+	}
+
+		.btn-custom:hover {
+			background-color: #1558b3;
+		}
+
+	.btn-danger:hover {
+		background-color: #cc0000;
+	}
+</style>
+<link href="~/datatables.net/dtbs5css.css" rel="stylesheet" />
+<body dir="rtl">
+	<div class="container" style="
+    position: relative;
+    border-radius: 3px;
+    background: #ffffff;
+    border-top: 3px solid #d2d6de;
+    margin-bottom: 20px;
+    width: 100%;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    margin-top: 10px;
+">
+		<h1>المرضى</h1>
+		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+		<div style="
+    display: flex;
+    margin-bottom: 22px;
+">
+			<a class="btn btn-custom" asp-action="AddPatientView" title="اضافة مريض"><i class="fa-solid fa-add"></i> مريض جديد</a>
+			<form asp-action="ExportToExcel" asp-controller="Patient" method="post" enctype="multipart/form-data" style="
+    margin-left: 10px;
+    margin-right: 10px;
+color:white;
+">
+				<button type="submit" class="btn" style="background-color: #00a65a !important; color:white !important;
+" title="تصدير الى Excel">
+					تصدير الى <i class="fa-solid fa-file-excel" style="
+    color: white;
+"></i>
+				</button>
+			</form>
+		</div>
+
+		<table id="patientTable" class="table" dir="rtl">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>اسم المريض</th>
+					<th>العمر</th>
+					<th>جنس المريض</th>
+					<th>هاتف المريض</th>
+					<th>عدد الكشوفات</th>
+					<th><i class="fa-solid fa-gear"></i></th>
+				</tr>
+			</thead>
+			<tbody>
+				@if (Model.Any())
+				{
+					int count = 0;
+
+					@foreach (var item in Model)
+					{
+						<tr>
+							@{
+								count += 1;
+							}
+							<td>@count</td>
+							<td>@item.PatientName</td>
+							<td>@item.Age</td>
+							<td>@item.Gender</td>
+							<td>
+								@if (item.patientPhoneNumbers != null && item.patientPhoneNumbers.Any())
+								{
+									@string.Join(", ", item.patientPhoneNumbers.Select(p => p.PhoneNumber))
+								}
+								else
+								{
+									<span>لا يوجد أرقام هواتف</span>
+								}
+							</td>
+							<td>@item.MedicalExamination.Count</td>
+							<td>
+								<a class="btn btn-custom" asp-controller="Patient" asp-action="EditPatient" asp-route-Id="@item.patientId" title="تعديل"><i class="fa-solid fa-edit"></i></a> |
+								<a class="btn btn-custom" asp-action="PatientDetails" asp-route-Id="@item.patientId" title="تفاصيل"><i class="fa-solid fa-circle-info"></i></a> |
+								<!-- Button to trigger the modal -->
+								<button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-id="@item.patientId" title="حذف"><i class="fa-solid fa-trash"></i></button>
+
+								<!-- Delete Confirmation Modal -->
+								<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+									<div class="modal-dialog">
+										<div class="modal-content">
+											<div class="modal-header">
+												<h5 class="modal-title" id="confirmDeleteLabel">تأكيد الحذف</h5>
+												<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+											</div>
+											<div class="modal-body">
+												هل أنت متأكد من أنك تريد حذف هذا المريض؟
+											</div>
+											<div class="modal-footer">
+												<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+												<form method="post" asp-action="DeletePatient" asp-route-Id="@item.patientId" class="delete-form">
+													<button type="submit" class="btn btn-danger">حذف</button>
+												</form>
+											</div>
+										</div>
+									</div>
+								</div>
+							</td>
+						</tr>
+					}
+				}
+
+			</tbody>
+		</table>
+	</div>
+
+	<!-- Delete Confirmation Modal -->
+	@section Scripts {
+		<script src="~/datatables.net/jquery.datatables.min.js"></script>
+		<script src="~/datatables.net/s.js"></script>
+		<script>
+			$(document).ready(function () {
+				$('#patientTable').DataTable({
+					language: {
+						"url": "/datatables.net/arabic.json"
+					},
+					direction: "rtl"
+				});
+
+				// Update route ID for delete confirmation
+				$('#confirmDeleteModal').on('show.bs.modal', function (event) {
+					var button = $(event.relatedTarget); // Button that triggered the modal
+					var patientId = button.data('Id');
+					var form = $(this).find('.delete-form');
+					form.attr('asp-route-Id', patientId); // Set the correct route ID for deletion
+				});
+			});
+		</script>
+		@{
+			await Html.RenderPartialAsync("_ValidationScriptsPartial");
+		}
+	}
+</body>

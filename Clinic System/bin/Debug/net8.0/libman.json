@@ -1,0 +1,27 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "boxicons@2.1.4",
+      "destination": "wwwroot/boxicons/"
+    },
+    {
+      "library": "font-awesome@6.5.2",
+      "destination": "wwwroot/font-awesome/"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "chartjs@0.3.24",
+      "destination": "wwwroot/chartjs/"
+    },
+    {
+      "library": "datatables.net@1.13.7",
+      "destination": "wwwroot/datatables.net/"
+    },
+    {
+      "library": "datatables.net-bs5@2.0.5",
+      "destination": "wwwroot/datatables.net/datatables.net-bs5/"
+    }
+  ]
+}
